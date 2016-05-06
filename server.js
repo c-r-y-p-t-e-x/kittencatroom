@@ -16,20 +16,35 @@
 	If it succeeds:
 		Open a secure websocket connection to the server.
 		The server and client will only exchange JSON encoded objects.
+		Client must send a packet "CONNECT" with their encrypted username.
 		Server will send a packet type "USERS" with global IDs mapped to their encrypted usernames.
-		Server will then send "USERS" followed by a JSON object of user IDs and selected usernames.
-		Server will periodically send "PING" followed by a random string.
-		The client will respond with "PONG" followed by the random string.
+		Server will periodically send packet type "PING".
+		The client will respond with type "PONG" and the same packet data in the PING packet.
 	
-	If another user joins, server will send "JOIN" followed by the encrypted username.
-	If another user leaves, server will send "DROP" followed by the encrypted username.
+	If another user joins, server will send "JOIN" with the global ID and encrypted username of the new cat.
+	If another user leaves, server will send "DROP" and the global ID of the departed cat.
+	To send a message, a user sends "MSG" with the message encrypted.
+	The server tags the object with their global ID, and relays it.
+	This "MSG" packet is then received, decrypted, and displayed.
 	
 	
-	JSON MESSAGE FORMAT
-	{
-		type:"JOIN",
-		data:"some stringy data"
+	CONNECT Example
+	{ "type":"CONNECT", "data":"encrypted username!" }
+
+	USERS Example (sans encryption)
+	{ 	"type":"USERS",
+		"data":{
+			"owe8sF":"lion",
+			"hH109l":"natalie",
+			"hASo6":"snowleapord69"
+		}
 	}
+
+	MSG Request Example (from client to server)
+	{ "type":"MSG", "data":{"msg":"we attack at dawn"} }
+	MSG Relay Example (from server to all browsers)
+	{ "type":"MSG", "data":{"id":"hH1091", "msg":"we attack at dawn"} }
+
 */
 
 var WebSocketServer = require('ws').Server;

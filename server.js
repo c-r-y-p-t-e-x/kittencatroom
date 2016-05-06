@@ -132,7 +132,7 @@ var httpsServer = https.createServer(https_options, (req,res) => {
 			while( rooms[roomname] != null ){ roomname = randomString(16); }
 			
 			// Create room
-			rooms[roomname] = {users:[]};
+			rooms[roomname] = {users:{}};
 			rooms[roomname].fish = formdata.room_password;
 			
 			res.writeHead(200, {"Content-Type":"text/html"});
@@ -174,18 +174,36 @@ wss.on("connection", (s) => {
 			case "CONNECT":
 				// TODO generate a global ID
 				var gid = randomString(7);
-
-				// Generate JOIN packet and send to connected users
-				var packet_join = { type:"JOIN", id:gid, name:request.data };
-				for(var user in room[request.roomid].users){
+				console.log("got connect request:");
+				console.log("ROOM: " + request.roomid);
+				console.log("NAME: " + request.data);
+				console.log("GID:  " + gid);
+				/* Generate JOIN packet and send to connected users
+				 var packet_join = { type:"JOIN", id:gid, name:request.data };
+				 for(var user in room[request.roomid].users){
 					user.socket.send(JSON.stringify(packet_join));
 				}
+				*/
 
 				// Generate a USERS packet and send to connecting user
-				var packet_users = { type:"USERS" }
-				// Put new user into room's "users" array
+				var packet_users = { type:"USERS", users:{} };
+				for( var key in rooms[request.roomid].users ){
+					var user = rooms[request.roomid].users[key];
+					packet_users.users[user.id] = {
+						name:user.name,
+						id:user.id
+					};
+				}
+
+				// Put new user into room's "users" object
+				rooms[request.roomid].users[gid] = {
+					name: request.data,
+					id: gid,
+					sock: s
+				};
 				
-				// It might be a good idea to check if request.roomid exists
+				s.send(JSON.stringify(packet_users));
+				// It might be a good idea to check if request.roomid exists too
 				break;
 		}
 

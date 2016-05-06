@@ -201,7 +201,7 @@ wss.on("connection", (s) => {
 				//Generate JOIN packet and send to connected users
 				 var packet_join = { type:"JOIN", id:gid, name:request.data };
 				 for(var user in rooms[request.roomid].users){
-					rooms[request.roomid].users[user].socket.send(JSON.stringify(packet_join));
+					rooms[request.roomid].users[user].sock.send(JSON.stringify(packet_join));
 				}
 
 				// Generate a USERS packet and send to connecting user

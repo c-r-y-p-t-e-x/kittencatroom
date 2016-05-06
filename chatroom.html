@@ -30,7 +30,7 @@
 			}
 
 			function connect(){
-				var url = "wss://cocaine.insecure.gq:25565/chat";
+				var url = "wss://" + window.location.host + "/chat";
 				socket = new WebSocket(url);
 				socket.onopen = function(e){ socket.send("hello babe!") };
 				socket.onmessage = processMessage;

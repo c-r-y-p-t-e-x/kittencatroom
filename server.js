@@ -29,7 +29,7 @@
 	
 	
 	CONNECT Example
-	{ "type":"CONNECT", "data":"encrypted username!" }
+	{ "type":"CONNECT", "roomid":"hMh67Kbb20ELC3Yo" "data":"encrypted username!" }
 
 	USERS Example (sans encryption)
 	{ 	"type":"USERS",
@@ -41,16 +41,16 @@
 	}
 
 	MSG Request Example (from client to server)
-	{ "type":"MSG", "data":{"msg":"we attack at dawn"} }
+	{ "type":"MSG", "data":"we attack at dawn" }
 	
 	MSG Relay Example (from server to all browsers)
-	{ "type":"MSG", "data":{"id":"hH1091", "msg":"we attack at dawn"} }
+	{ "type":"MSG", "data":"we attack at dawn", "id":"hH1091" }
 
-	JOIN Example
-	{ "type":"JOIN", "data":{"id":"gFpeR8", "name":"sailingspaghettimonster"} }
+	JOIN Example (sans encryption)
+	{ "type":"JOIN", "id":"gFpeR8", "data":"sailingspaghettimonster" }
 
 	DROP Example
-	{ "type":"DROP", "data":{"id":"gFpeR8"} }
+	{ "type":"DROP", "id":"gFpeR8" }
 
 */
 

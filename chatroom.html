@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>a secret room</title>
+		<script type="text/javascript" src="/res/sha512.js"></script>
+		<script type="text/javascript" src="/res/aes.js"></script>
+		<script type="text/javascript">
+		
+			// SERVER PROVIDED:
+			ROOM_FISH = "$fish";
+		
+			function randomString(len){
+				var s = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+				return Array(N).join().split(',').map(function() { return s.charAt(Math.floor(Math.random() * s.length)); }).join('');
+			}
+			
+			function checkPassword(){
+				var passwordField = document.getElementById("pwd");
+				var usernameField = document.getElementById("uname");
+				var passwordAttempt = passwordField.value;
+				var username = usernameField.value;
+				var isCorrect = CryptoJS.AES.decrypt(ROOM_FISH, passwordAttempt) != "";
+				if(isCorrect)
+					connect();
+				else{
+					alert("Incorrect password!");
+					window.location = "/";
+					return;
+				}
+			}
+
+			function connect(){
+				var url = "wss://cocaine.insecure.gq:25565/chat";
+				socket = new WebSocket(url);
+				socket.onopen = function(e){ socket.send("hello babe!") };
+				socket.onmessage = processMessage;
+			}
+
+			function processMessage(evt){
+				var msg;
+				try{
+					msg = JSON.parse(evt.data);
+				}catch(e){
+					if(e instanceof SyntaxError){
+						console.log("Server sent an invalid request:");
+						console.log(evt.data);
+						console.log(e);
+						return;
+					}else{
+						console.log(e);
+						return;
+					}
+				}
+
+				switch(msg.type){
+					"PING":
+						response = {type:"PONG", data:msg.data};
+						socket.send(JSON.stringify(response));
+						break;
+				}
+			}
+		</script>
+	</head>
+	<body>
+		
+		Enter a username and the room password, then connect.<br/>
+		Username: <input type="text" id="uname" /><br/>
+		Password: <input type="password" id="pwd" /><br/>
+		<input type="button" value="Connect to room" onclick="checkPassword();" />
+		
+	</body>
+</html>

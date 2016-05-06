@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>catroom - Encrypted Chat Rooms</title>
+		<script type="text/javascript" src="/res/sha512.js"></script>
+		<script type="text/javascript" src="/res/aes.js"></script>
+		<script type="text/javascript">
+			function createroom(){
+				var s = randomString(64);
+				document.getElementById("post_password").value = CryptoJS.AES.encrypt(s, document.getElementById("room_password").value);
+				document.getElementById("form").submit();
+			}
+			
+			function randomString(len){
+				var s = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+				return Array(len).join().split(',').map(function() { return s.charAt(Math.floor(Math.random() * s.length)); }).join('');
+			}
+		</script>
+	</head>
+	<body>
+		Now with websockets!<br/>
+		<!-- <a href="/newroom/">Get a room!</a> -->
+		<form id="form" method="POST" action="/newroom/">
+			<input type="hidden" name="room_password" id="post_password"/>
+		</form>
+		Room Password: <input id="room_password" type="password" name="room_password" value="" />
+		<input type="button" onclick="createroom();" value="Create room" />
+	</body>
+</html>
+

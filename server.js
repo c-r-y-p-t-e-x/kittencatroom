@@ -53,7 +53,7 @@
 	{ "type":"DROP", "id":"gFpeR8" }
 	
 	ERROR Example
-	{ "type":"ERROR", "id":"unique error id", "data":"information for humans" }
+	{ "type":"ERROR", "id":"unique error id", "data":"information for humans", die:true|false }
 
 */
 
@@ -175,18 +175,34 @@ wss.on("connection", (s) => {
 
 		switch(request.type){
 			case "CONNECT":
-				// TODO generate a global ID
+				// check room exists
+				if( rooms[request.roomid] == null ){
+					console.log("connect attempt to non-existant room: " + request.roomid);
+					var packet_error = {
+						type:"ERROR",
+						id:"connecterror",
+						data:"this room does not exist",
+						die:true
+					};
+					s.send(JSON.stringify(packet_error));
+					s.close();
+					break;
+				}
+				
+				// check gid doesn't already exist
 				var gid = randomString(7);
+				while( rooms[request.roomid].users[gid] != null ) gid = randomString(7);
+				
 				console.log("got connect request:");
 				console.log("ROOM: " + request.roomid);
 				console.log("NAME: " + request.data);
 				console.log("GID:  " + gid);
-				/* Generate JOIN packet and send to connected users
+				
+				//Generate JOIN packet and send to connected users
 				 var packet_join = { type:"JOIN", id:gid, name:request.data };
-				 for(var user in room[request.roomid].users){
-					user.socket.send(JSON.stringify(packet_join));
+				 for(var user in rooms[request.roomid].users){
+					rooms[request.roomid].users[user].socket.send(JSON.stringify(packet_join));
 				}
-				*/
 
 				// Generate a USERS packet and send to connecting user
 				var packet_users = { type:"USERS", users:{} };
@@ -206,7 +222,6 @@ wss.on("connection", (s) => {
 				};
 				
 				s.send(JSON.stringify(packet_users));
-				// It might be a good idea to check if request.roomid exists too
 				break;
 		}
 

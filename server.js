@@ -51,6 +51,9 @@
 
 	DROP Example
 	{ "type":"DROP", "id":"gFpeR8" }
+	
+	ERROR Example
+	{ "type":"ERROR", "id":"unique error id", "data":"information for humans" }
 
 */
 

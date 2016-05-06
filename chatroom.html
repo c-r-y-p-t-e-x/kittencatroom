@@ -8,6 +8,8 @@
 		
 			// SERVER PROVIDED:
 			ROOM_FISH = "$fish";
+
+			SYMKEY = null;
 		
 			function randomString(len){
 				var s = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -18,9 +20,10 @@
 				var passwordField = document.getElementById("pwd");
 				var usernameField = document.getElementById("uname");
 				var passwordAttempt = passwordField.value;
-				var username = usernameField.value;
+				username = usernameField.value;
 				var isCorrect = CryptoJS.AES.decrypt(ROOM_FISH, passwordAttempt) != "";
 				if(isCorrect)
+					SYMKEY = passwordAttempt;
 					connect();
 				else{
 					alert("Incorrect password!");
@@ -32,7 +35,13 @@
 			function connect(){
 				var url = "wss://" + window.location.host + "/chat";
 				socket = new WebSocket(url);
-				socket.onopen = function(e){ socket.send("hello babe!") };
+				socket.onopen = function(e){
+					var packet = {
+						type:"CONNECT",
+						data:CryptoJS.AES.encrypt(username, SYMKEY)
+					};
+					socket.send(JSON.stringify(packet));
+				};
 				socket.onmessage = processMessage;
 			}
 

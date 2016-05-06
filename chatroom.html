@@ -10,7 +10,9 @@
 			ROOM_FISH = "$fish";
 
 			SYMKEY = null;
-			STATUS = document.getElementById("status");
+			function onload(){
+				STATUS = document.getElementById("status");
+			}
 		
 			function randomString(len){
 				var s = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -46,18 +48,18 @@
 			}
 
 			function connect(){
-				STATUS.value = "Connecting...";
+				STATUS.innerHTML = "Connecting...";
 				var url = "wss://" + window.location.host + "/chat";
 				socket = new WebSocket(url);
 				socket.onopen = function(e){
-					STATUS.value = "Saying hello...";
+					STATUS.innerHTML = "Saying hello...";
 					var packet = {
 						type:"CONNECT",
 						roomid: getQueryVariable("id"),
 						data:CryptoJS.AES.encrypt(username, SYMKEY).toString()
 					};
 					socket.send(JSON.stringify(packet));
-					STATUS.value = "Awaiting user list...";
+					STATUS.innerHTML = "Awaiting user list...";
 					// alert("Sent: " + JSON.stringify(packet));
 				};
 				socket.onmessage = processMessage;
@@ -83,13 +85,13 @@
 					case "PING":
 						response = {type:"PONG", data:msg.data};
 						socket.send(JSON.stringify(response));
-						STATUS.value += " PONG (" + msg.data + ") ";
+						STATUS.innerHTML += " PONG (" + msg.data + ") ";
 						break;
 				}
 			}
 		</script>
 	</head>
-	<body>
+	<body onload="onload();">
 		
 		Enter a username and the room password, then connect.<br/>
 		Username: <input type="text" id="uname" /><br/>

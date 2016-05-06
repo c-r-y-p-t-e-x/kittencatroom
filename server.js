@@ -173,8 +173,16 @@ wss.on("connection", (s) => {
 		switch(request.type){
 			case "CONNECT":
 				// TODO generate a global ID
+				var gid = randomString(7);
+
 				// Generate JOIN packet and send to connected users
+				var packet_join = { type:"JOIN", id:gid, name:request.data };
+				for(var user in room[request.roomid].users){
+					user.socket.send(JSON.stringify(packet_join));
+				}
+
 				// Generate a USERS packet and send to connecting user
+				var packet_users = { type:"USERS" }
 				// Put new user into room's "users" array
 				
 				// It might be a good idea to check if request.roomid exists

@@ -47,7 +47,7 @@
 	{ "type":"MSG", "data":"we attack at dawn", "id":"hH1091" }
 
 	JOIN Example (sans encryption)
-	{ "type":"JOIN", "id":"gFpeR8", "data":"sailingspaghettimonster" }
+	{ "type":"JOIN", "id":"gFpeR8", "name":"sailingspaghettimonster" }
 
 	DROP Example
 	{ "type":"DROP", "id":"gFpeR8" }

@@ -10,8 +10,10 @@
 			ROOM_FISH = "$fish";
 
 			SYMKEY = null;
+			USERS = {};
 			function onload(){
 				STATUS = document.getElementById("status");
+				BOX = document.getElementById("box");
 			}
 		
 			function randomString(len){
@@ -87,6 +89,12 @@
 						socket.send(JSON.stringify(response));
 						STATUS.innerHTML += " PONG (" + msg.data + ") ";
 						break;
+					case "JOIN":
+						msg.name = CryptoJS.AES.decrypt(msg.name, SYMKEY).toString(CryptoJS.enc.Utf8);
+						var newuser = {id:msg.id, name:msg.name};
+						USERS[msg.id] = newuser;
+						box.innerHTML += "User joined: " + msg.name + "<br/>";
+						break;
 				}
 			}
 		</script>
@@ -99,5 +107,6 @@
 		<input type="button" value="Connect to room" onclick="checkPassword();" />
 		<hr/>
 		<p style="font-size:14pt;">Status: <span id="status">Not Connected</span></p>
+		<p style="font-size:14pt;" id="box"></p>
 	</body>
 </html>

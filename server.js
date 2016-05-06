@@ -159,7 +159,28 @@ wss = new WebSocketServer({server:httpsServer, path: "/chat"});
 wss.on("connection", (s) => {
 	
 	s.on("message", (message) => {
-		s.send(message + " " + Math.random());
+		var request;
+		try {
+			request = JSON.parse(message);
+		} catch(err) {
+			if( err instanceof SyntaxError )
+				console.log("Got an invalid chat request");
+
+			console.log(err);
+			return;
+		}
+
+		switch(request.type){
+			case "CONNECT":
+				// TODO generate a global ID
+				// Generate JOIN packet and send to connected users
+				// Generate a USERS packet and send to connecting user
+				// Put new user into room's "users" array
+				
+				// It might be a good idea to check if request.roomid exists
+				break;
+		}
+
 	});
 	
 });

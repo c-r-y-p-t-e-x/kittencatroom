@@ -26,35 +26,6 @@
 	To send a message, a user sends "MSG" with the message encrypted.
 	The server tags the object with their global ID, and relays it.
 	This "MSG" packet is then received, decrypted, and displayed.
-	
-	
-	CONNECT Example
-	{ "type":"CONNECT", "roomid":"hMh67Kbb20ELC3Yo" "data":"encrypted username!" }
-
-	USERS Example (sans encryption)
-	{ 	"type":"USERS",
-		"data":{
-			"owe8sF":"lion",
-			"hH109l":"natalie",
-			"hASo6":"snowleapord69"
-		}
-	}
-
-	MSG Request Example (from client to server)
-	{ "type":"MSG", "data":"we attack at dawn" }
-	
-	MSG Relay Example (from server to all browsers)
-	{ "type":"MSG", "data":"we attack at dawn", "id":"hH1091" }
-
-	JOIN Example (sans encryption)
-	{ "type":"JOIN", "id":"gFpeR8", "name":"sailingspaghettimonster" }
-
-	DROP Example
-	{ "type":"DROP", "id":"gFpeR8" }
-	
-	ERROR Example
-	{ "type":"ERROR", "id":"unique error id", "data":"information for humans", die:true|false }
-
 */
 
 var WebSocketServer = require('ws').Server;

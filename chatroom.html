@@ -88,17 +88,31 @@
 					case "USERS":
 						STATUS.innerHTML = "Connected!";
 						CONNECTED = true;
+						
+						for(var userid in msg.users){
+							USERS[userid] = {
+								id:msg.users[userid].id,
+								name:CryptoJS.AES.decrypt(msg.users[userid].name, SYMKEY).toString(CryptoJS.enc.Utf8)
+							};
+						}
+						
 						break;
+						
 					case "PING":
 						response = {type:"PONG", data:msg.data};
 						socket.send(JSON.stringify(response));
 						STATUS.innerHTML += " PONG (" + msg.data + ") ";
 						break;
+						
 					case "JOIN":
 						msg.name = CryptoJS.AES.decrypt(msg.name, SYMKEY).toString(CryptoJS.enc.Utf8);
 						var newuser = {id:msg.id, name:msg.name};
 						USERS[msg.id] = newuser;
 						box.innerHTML += "User joined: " + msg.name + "<br/>";
+						break;
+					
+					case "MSG":
+						box.innerHTML += msg.id + " (" + USERS[msg.id].name + ") " + CryptoJS.AES.decrypt(msg.data,SYMKEY).toString(CryptoJS.enc.Utf8) + "<br/>";
 						break;
 				}
 			}

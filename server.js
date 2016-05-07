@@ -204,6 +204,15 @@ wss.on("connection", (s) => {
 					rooms[request.roomid].users[user].sock.send(JSON.stringify(packet_join));
 				}
 
+				// Put new user into room's "users" object
+				s.roomid = request.roomid;
+				s.gid = gid;
+				rooms[request.roomid].users[gid] = {
+					name: request.data,
+					id: gid,
+					sock: s
+				};
+
 				// Generate a USERS packet and send to connecting user
 				var packet_users = { type:"USERS", users:{} };
 				for( var key in rooms[request.roomid].users ){
@@ -213,22 +222,15 @@ wss.on("connection", (s) => {
 						id:user.id
 					};
 				}
-
-				// Put new user into room's "users" object
-				rooms[request.roomid].users[gid] = {
-					name: request.data,
-					id: gid,
-					sock: s
-				};
 				
 				s.send(JSON.stringify(packet_users));
 				break;
+			
 			case "MSG":
 				console.log("Received message: " + request.data);
-				for(var room in rooms){
-					for(var user in rooms[room].users){
-						console.log(rooms[room].users[user].sock == s);
-					}
+				request.id = s.gid; // tag with sender's ID
+				for(var userid in rooms[s.roomid].users){
+					rooms[s.roomid].users[userid].sock.send(JSON.stringify(request));
 				}
 				break;
 		}

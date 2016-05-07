@@ -14,7 +14,7 @@ These are the packets exchanged between the client (chatroom.html) and the serve
 #### USERS
 	{
 		"type":"USERS",
-		"data":{
+		"users":{
 			"globalid":"encrypted username",
 			"owe8sF":"lion",
 			"hH109l":"natalie",

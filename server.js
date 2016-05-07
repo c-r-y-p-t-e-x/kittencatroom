@@ -223,6 +223,14 @@ wss.on("connection", (s) => {
 				
 				s.send(JSON.stringify(packet_users));
 				break;
+			case "MSG":
+				console.log("Received message: " + request.data);
+				for(var room in rooms){
+					for(var user in rooms[room].users){
+						console.log(rooms[room].users[user].sock == s);
+					}
+				}
+				break;
 		}
 
 	});

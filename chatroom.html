@@ -10,6 +10,7 @@
 			ROOM_FISH = "$fish";
 
 			SYMKEY = null;
+			CONNECTED = false;
 			USERS = {};
 			function onload(){
 				STATUS = document.getElementById("status");
@@ -84,6 +85,10 @@
 				}
 
 				switch(msg.type){
+					case "USERS":
+						STATUS.innerHTML = "Connected!";
+						CONNECTED = true;
+						break;
 					case "PING":
 						response = {type:"PONG", data:msg.data};
 						socket.send(JSON.stringify(response));
@@ -97,6 +102,22 @@
 						break;
 				}
 			}
+			
+			function boxKeyPress(event){
+				if(event.keyCode == 13){
+					sendMessage();
+				}
+			}
+			
+			function sendMessage(){
+				var inputbox = document.getElementById("inputbox");
+				if(inputbox.value == "") return;
+				var message = CryptoJS.AES.encrypt(inputbox.value, SYMKEY);
+				inputbox.value = "";
+				
+				var packet = {type: "MSG", data: message.toString()};
+				socket.send(JSON.stringify(packet));
+			}
 		</script>
 	</head>
 	<body onload="onload();">
@@ -106,7 +127,9 @@
 		Password: <input type="password" id="pwd" /><br/>
 		<input type="button" value="Connect to room" onclick="checkPassword();" />
 		<hr/>
+		
 		<p style="font-size:14pt;">Status: <span id="status">Not Connected</span></p>
 		<p style="font-size:14pt;" id="box"></p>
+		<input type="text" id="inputbox" onkeypress="boxKeyPress(event);"/><input type="button" onclick="sendMessage();" value="Send" />
 	</body>
 </html>

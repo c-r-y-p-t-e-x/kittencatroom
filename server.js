@@ -48,6 +48,7 @@ const resources = {
 };
 
 rooms = {};
+PING_INTERVAL = 10000; // interval between pings
 
 function randomString(len){
 	var s = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -193,6 +194,10 @@ wss.on("connection", (connection) => {
 						id:user.id
 					};
 				}
+				
+				// Start pinging the new kid
+				rooms[request.roomid].users[globalID].pingInterval = setInterval(pingUser, PING_INTERVAL, request.roomid, globalID);
+				pingUser(request.roomid, globalID);
 
 				connection.send(JSON.stringify(packet_users));
 				break;
@@ -204,10 +209,26 @@ wss.on("connection", (connection) => {
 					rooms[connection.roomid].users[userid].connection.send(JSON.stringify(request));
 				}
 				break;
+			
+			case "PONG":
+				var user = rooms[connection.roomid].users[connection.globalID];
+				if(request.data != user.ping_string){
+					var error_packet = {type:"ERROR", id:"pingerror", data:"incorrect response", die:false};
+					user.connection.send(JSON.stringify(error_packet));
+				}
+				break;
 		}
 
 	});
 
 });
+
+function pingUser(roomid, userid){
+	var ping_packet = {type:"PING", data:randomString(6)};
+	rooms[roomid].users[userid].connection.send(JSON.stringify(ping_packet));
+	rooms[roomid].users[userid].ping_string = ping_packet.data;
+	
+	// TODO Check for disconnected users!
+}
 
 httpsServer.listen(25565);

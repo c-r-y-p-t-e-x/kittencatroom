@@ -114,6 +114,10 @@
 					case "MSG":
 						box.innerHTML += msg.id + " (" + USERS[msg.id].name + ") " + CryptoJS.AES.decrypt(msg.data,SYMKEY).toString(CryptoJS.enc.Utf8) + "<br/>";
 						break;
+
+					case "ERROR":
+						STATUS.innerHTML = "ERROR:" + msg.id + " (" + msg.data + ") Disconnect: " + msg.die + "<br/>" + STATUS.innerHTML;
+						break;
 				}
 			}
 			

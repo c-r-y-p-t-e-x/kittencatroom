@@ -44,7 +44,8 @@ const resources = {
 	index:fs.readFileSync('index.html', 'utf-8'),
 	roomtemplate:fs.readFileSync('chatroom.html', 'utf-8'),
 	sha512:fs.readFileSync('crypto-js/sha512.js'),
-	aes:fs.readFileSync('crypto-js/aes.js')
+	aes:fs.readFileSync('crypto-js/aes.js'),
+	client_js:fs.readFileSync('client.js')
 };
 
 rooms = {};
@@ -123,6 +124,10 @@ var httpsServer = https.createServer(https_options, (req,res) => {
 		res.writeHead(200, {"Content-Type":"text/javascript"});
 		res.end(resources.aes);
 
+	else if( url.pathname == "res/client.js" ){
+		res.writeHead(200, {"Content-Type":"text/javascript"});
+		res.end(resources.client_js);
+
 	}else{
 		res.writeHead(404);
 		res.end("Resource not found.\n");
@@ -194,7 +199,7 @@ wss.on("connection", (connection) => {
 						id:user.id
 					};
 				}
-				
+
 				// Start pinging the new kid
 				rooms[request.roomid].users[globalID].pingInterval = setInterval(pingUser, PING_INTERVAL, request.roomid, globalID);
 				pingUser(request.roomid, globalID);
@@ -209,7 +214,7 @@ wss.on("connection", (connection) => {
 					rooms[connection.roomid].users[userid].connection.send(JSON.stringify(request));
 				}
 				break;
-			
+
 			case "PONG":
 				var user = rooms[connection.roomid].users[connection.globalID];
 				if(request.data != user.ping_string){
@@ -227,7 +232,7 @@ function pingUser(roomid, userid){
 	var ping_packet = {type:"PING", data:randomString(6)};
 	rooms[roomid].users[userid].connection.send(JSON.stringify(ping_packet));
 	rooms[roomid].users[userid].ping_string = ping_packet.data;
-	
+
 	// TODO Check for disconnected users!
 }
 

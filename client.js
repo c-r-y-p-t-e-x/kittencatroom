@@ -29,6 +29,16 @@ function getQueryVariable(variable) {
 	return null;
 }
 
+// python style string.format
+if (!String.prototype.format) {
+	String.prototype.format = function() {
+	var args = arguments;
+	return this.replace(/{(\d+)}/g, function(match, number) { 
+			return typeof args[number] != 'undefined' ? args[number] : match;
+      });
+    };
+}
+
 function checkPassword(){
 	var passwordField = document.getElementById("pwd");
 	var usernameField = document.getElementById("uname");
@@ -103,11 +113,12 @@ function processMessage(evt){
 		msg.name = CryptoJS.AES.decrypt(msg.name, SYMKEY).toString(CryptoJS.enc.Utf8);
 		var newuser = {id:msg.id, name:msg.name};
 		USERS[msg.id] = newuser;
-		box.innerHTML += "User joined: " + msg.name + "<br/>";
+		putMessage("<strong>SERVER</strong>", msg.name + " connected.");
 		break;
 
 		case "MSG":
-		box.innerHTML += msg.id + " (" + USERS[msg.id].name + ") " + CryptoJS.AES.decrypt(msg.data,SYMKEY).toString(CryptoJS.enc.Utf8) + "<br/>";
+		//box.innerHTML += msg.id + " (" + USERS[msg.id].name + ") " + CryptoJS.AES.decrypt(msg.data,SYMKEY).toString(CryptoJS.enc.Utf8) + "<br/>";
+		putMessage(USERS[msg.id].name, CryptoJS.AES.decrypt(msg.data,SYMKEY).toString(CryptoJS.enc.Utf8));
 		break;
 
 		case "ERROR":
@@ -118,6 +129,12 @@ function processMessage(evt){
 		}
 		break;
 	}
+}
+
+function putMessage(uname, msg){
+	var date = new Date();
+	var timestamp = date.getHours() + ":" + date.getMinutes();
+	box.innerHTML += "<span class=\"timestamp\">{0}</span><span class=\"username\">{1}</span> {2}<br/>\n".format(timestamp,uname,msg);
 }
 
 function boxKeyPress(event){

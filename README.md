@@ -1,6 +1,8 @@
 # kittencatroom
-Encrypted webchat client using websockets and a Nodejs server.  
+End to end encrypted webchat client using websockets and a Nodejs server.  
 Communications are symmetrically encrypted from the browser, sent over HTTPS and WSS (secure websockets).
+
+Encryption done on the browser with CryptoJS's 256-bit AES.
 
 ## Messaging Protocol
 All messages are sent over a SSL/TLS websocket connection. Messages are sent as JSON strings, and must have a "type" field.  

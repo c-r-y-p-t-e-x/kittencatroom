@@ -9,17 +9,53 @@
 			ROOM_FISH = "$fish";
 		</script>
 		<script type="text/javascript" src="/res/client.js"></script>
+
+		<style type="text/css">
+				body {
+					margin:0px 0px;
+					font-family:Arial;
+					font-size:14px;
+				}
+
+				#chatsection {
+					width:100%;
+				}
+
+				#chatsection #box {
+					font-family:monospace;
+					max-height:500px;
+					overflow-y:scroll;
+					font-size:14px;
+				}
+
+				#chatsection #box .username {
+					font-weight:800;
+					width:10%;
+					text-align: right;
+					display:inline-block;
+				}
+
+		</style>
 	</head>
 	<body onload="onload();">
 
-		Enter a username and the room password, then connect.<br/>
-		Username: <input type="text" id="uname" /><br/>
-		Password: <input type="password" id="pwd" /><br/>
-		<input type="button" value="Connect to room" onclick="checkPassword();" />
-		<hr/>
+		<section id="loginsection">
+			Enter a username and the room password, then connect.<br/>
+			Username: <input type="text" id="uname" /><br/>
+			Password: <input type="password" id="pwd" /><br/>
+			<input type="button" value="Connect to room" onclick="checkPassword();" />
+			<hr/>
+		</section>
 
-		<p style="font-size:14pt;">Status: <span id="status">Not Connected</span></p>
-		<p style="font-size:14pt;" id="box"></p>
-		<input type="text" id="inputbox" onkeypress="boxKeyPress(event);"/><input type="button" onclick="sendMessage();" value="Send" />
+		<section id="statussection">
+			<p style="font-size:14pt;">Status: <span id="status">Not Connected</span></p>
+		</section>
+
+		<section id="chatsection">
+			<p id="box">
+				<!-- <span class="timestamp">HH:MM</span><span class="username">username</span> do you hate money?<br/> -->
+			</p>
+			<input type="text" id="inputbox" onkeypress="boxKeyPress(event);"/><input type="button" onclick="sendMessage();" value="Send" />
+		</section>
 	</body>
 </html>

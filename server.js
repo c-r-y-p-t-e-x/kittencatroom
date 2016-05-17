@@ -124,7 +124,7 @@ var httpsServer = https.createServer(https_options, (req,res) => {
 		res.writeHead(200, {"Content-Type":"text/javascript"});
 		res.end(resources.aes);
 
-	else if( url.pathname == "res/client.js" ){
+	}else if( url.pathname == "/res/client.js" ){
 		res.writeHead(200, {"Content-Type":"text/javascript"});
 		res.end(resources.client_js);
 

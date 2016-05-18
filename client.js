@@ -104,29 +104,34 @@ function processMessage(evt){
 		break;
 
 		case "PING":
-		response = {type:"PONG", data:msg.data};
-		socket.send(JSON.stringify(response));
-		STATUS.innerHTML += " PONG (" + msg.data + ") ";
+			response = {type:"PONG", data:msg.data};
+			socket.send(JSON.stringify(response));
+			STATUS.innerHTML += " PONG (" + msg.data + ") ";
 		break;
 
 		case "JOIN":
-		msg.name = CryptoJS.AES.decrypt(msg.name, SYMKEY).toString(CryptoJS.enc.Utf8);
-		var newuser = {id:msg.id, name:msg.name};
-		USERS[msg.id] = newuser;
-		putMessage("<strong>SERVER</strong>", msg.name + " connected.");
+			msg.name = CryptoJS.AES.decrypt(msg.name, SYMKEY).toString(CryptoJS.enc.Utf8);
+			var newuser = {id:msg.id, name:msg.name};
+			USERS[msg.id] = newuser;
+			putMessage("<strong>SERVER</strong>", msg.name + " connected.");
 		break;
 
 		case "MSG":
-		//box.innerHTML += msg.id + " (" + USERS[msg.id].name + ") " + CryptoJS.AES.decrypt(msg.data,SYMKEY).toString(CryptoJS.enc.Utf8) + "<br/>";
-		putMessage(USERS[msg.id].name, CryptoJS.AES.decrypt(msg.data,SYMKEY).toString(CryptoJS.enc.Utf8));
+			//box.innerHTML += msg.id + " (" + USERS[msg.id].name + ") " + CryptoJS.AES.decrypt(msg.data,SYMKEY).toString(CryptoJS.enc.Utf8) + "<br/>";
+			putMessage(USERS[msg.id].name, CryptoJS.AES.decrypt(msg.data,SYMKEY).toString(CryptoJS.enc.Utf8));
 		break;
 
 		case "ERROR":
-		STATUS.innerHTML = "ERROR:" + msg.id + " (" + msg.data + ") Disconnect: " + msg.die + "<br/>" + STATUS.innerHTML;
-		if( msg.die == true ){
-			socket.close();
-			STATUS.innerHTML += "<strong>Disconnect</strong>";
-		}
+			STATUS.innerHTML = "ERROR:" + msg.id + " (" + msg.data + ") Disconnect: " + msg.die + "<br/>" + STATUS.innerHTML;
+			if( msg.die == true ){
+				socket.close();
+				STATUS.innerHTML += "<strong>Disconnect</strong>";
+			}
+		break;
+		
+		case "DROP":
+			putMessage("<strong>SERVER</strong>", USERS[msg.id].name + " (" + msg.id + ") has disconnected.");
+			delete USERS[msg.id];
 		break;
 	}
 }

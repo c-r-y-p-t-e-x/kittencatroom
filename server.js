@@ -13,7 +13,7 @@
 	This page also loads the client code in client.js.
 	When sent chatroom.html, the room's FISH is put in a <script> tag as a variable.
 	They enter a password, and do AES.decrypt to the FISH.
-	If it fails, gracefully the page.
+	If it fails, gracefully leave the page.
 	If it succeeds:
 		Open a secure websocket connection to the server.
 		Client must send a packet "CONNECT" with username, encrypted with the password.

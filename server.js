@@ -213,7 +213,8 @@ wss.on("connection", (connection) => {
 				rooms[request.roomid].users[globalID] = {
 					name: request.data,
 					id: globalID,
-					connection: connection
+					connection: connection,
+					ping_string: ""
 				};
 
 				// Generate a USERS packet and send to connecting user
@@ -247,6 +248,7 @@ wss.on("connection", (connection) => {
 					var error_packet = {type:"ERROR", id:"pingerror", data:"incorrect response", die:false};
 					user.connection.send(JSON.stringify(error_packet));
 				}
+				user.ping_string = "";
 				break;
 		}
 
@@ -256,8 +258,17 @@ wss.on("connection", (connection) => {
 
 function pingUser(roomid, userid){
 	var ping_packet = {type:"PING", data:randomString(6)};
-	rooms[roomid].users[userid].connection.send(JSON.stringify(ping_packet));
-	rooms[roomid].users[userid].ping_string = ping_packet.data;
+	var user = rooms[roomid].users[userid];
+	
+	if( user.ping_string != "" ){
+		var error_packet = {type:"ERROR", id:"pingerror", data:"timeout", die:true};
+		user.connection.send(JSON.stringify(error_packet));
+		user.connection.close();
+		return;
+	}
+	
+	user.connection.send(JSON.stringify(ping_packet));
+	user.ping_string = ping_packet.data;
 }
 
 httpsServer.listen(25565);

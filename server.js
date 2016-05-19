@@ -39,6 +39,7 @@ var WebSocket = require('ws').WebSocket;
 const https = require('https');
 const fs = require('fs');
 const urllib = require('url');
+const nodeutil = require('util');
 const querystring = require('querystring');
 
 const https_options = {
@@ -55,7 +56,8 @@ const resources = {
 };
 
 rooms = {};
-PING_INTERVAL = 10000; // interval between pings
+PING_INTERVAL = 3 * 60 * 10000; // interval between pings in milliseconds
+DEV_MODE = true; // enable /debug/* calls
 
 function randomString(len){
 	var s = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -134,6 +136,10 @@ var httpsServer = https.createServer(https_options, (req,res) => {
 		res.writeHead(200, {"Content-Type":"text/javascript"});
 		res.end(resources.client_js);
 
+	}else if( url.pathname == "/debug/rooms.json" && DEV_MODE == true){
+		res.writeHead(200, {"Content-Type":"text/plain"});
+		res.end(nodeutil.inspect(rooms));
+	
 	}else{
 		res.writeHead(404);
 		res.end("Resource not found.\n");

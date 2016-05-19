@@ -68,7 +68,6 @@ function connect(){
 		};
 		socket.send(JSON.stringify(packet));
 		STATUS.innerHTML = "Awaiting user list...";
-		// alert("Sent: " + JSON.stringify(packet));
 	};
 	socket.onmessage = processMessage;
 }
@@ -91,15 +90,16 @@ function processMessage(evt){
 
 	switch(msg.type){
 		case "USERS":
-		STATUS.innerHTML = "Connected!";
-		CONNECTED = true;
+			STATUS.innerHTML = "Connected!";
+			CONNECTED = true;
 
-		for(var userid in msg.users){
-			USERS[userid] = {
-				id:msg.users[userid].id,
-				name:CryptoJS.AES.decrypt(msg.users[userid].name, SYMKEY).toString(CryptoJS.enc.Utf8)
-			};
-		}
+			for(var userid in msg.users){
+				USERS[userid] = {
+					id:msg.users[userid].id,
+					name:CryptoJS.AES.decrypt(msg.users[userid].name, SYMKEY).toString(CryptoJS.enc.Utf8)
+				};
+			}
+			putMessage("<strong>SERVER</strong>", username + " connected.");
 
 		break;
 
@@ -117,7 +117,6 @@ function processMessage(evt){
 		break;
 
 		case "MSG":
-			//box.innerHTML += msg.id + " (" + USERS[msg.id].name + ") " + CryptoJS.AES.decrypt(msg.data,SYMKEY).toString(CryptoJS.enc.Utf8) + "<br/>";
 			putMessage(USERS[msg.id].name, CryptoJS.AES.decrypt(msg.data,SYMKEY).toString(CryptoJS.enc.Utf8));
 		break;
 

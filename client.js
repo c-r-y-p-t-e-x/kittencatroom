@@ -6,6 +6,7 @@
 SYMKEY = null;
 CONNECTED = false;
 USERS = {};
+RESPOND_TO_PINGS = true;
 
 function onload(){
 	STATUS = document.getElementById("status");
@@ -104,6 +105,7 @@ function processMessage(evt){
 		break;
 
 		case "PING":
+			if(RESPOND_TO_PINGS == false) return;
 			response = {type:"PONG", data:msg.data};
 			socket.send(JSON.stringify(response));
 			STATUS.innerHTML += " PONG (" + msg.data + ") ";
@@ -121,10 +123,13 @@ function processMessage(evt){
 		break;
 
 		case "ERROR":
-			STATUS.innerHTML = "ERROR:" + msg.id + " (" + msg.data + ") Disconnect: " + msg.die + "<br/>" + STATUS.innerHTML;
+			// STATUS.innerHTML = "ERROR:" + msg.id + " (" + msg.data + ") Disconnect: " + msg.die + "<br/>" + STATUS.innerHTML;
+			putMessage("<strong>ERROR</strong>", "Received error from server: (" + msg.id + ") " + msg.data);
 			if( msg.die == true ){
 				socket.close();
-				STATUS.innerHTML += "<strong>Disconnect</strong>";
+				// STATUS.innerHTML += "<strong>Disconnect</strong>";
+				STATUS.innerHTML = "Disconnected.";
+				putMessage("<strong>ERROR</strong>", "The server has killed your connection.");
 			}
 		break;
 		

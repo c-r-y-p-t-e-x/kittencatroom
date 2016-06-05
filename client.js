@@ -93,14 +93,16 @@ function processMessage(evt){
 		case "USERS":
 			STATUS.innerHTML = "Connected!";
 			CONNECTED = true;
-
+			var _users = [];
 			for(var userid in msg.users){
 				USERS[userid] = {
 					id:msg.users[userid].id,
 					name:CryptoJS.AES.decrypt(msg.users[userid].name, SYMKEY).toString(CryptoJS.enc.Utf8)
 				};
+				_users.push(USERS[userid].name);
 			}
 			putMessage("<strong>SERVER</strong>", username + " connected.");
+			putMessage("<strong>SERVER</strong>", "Users connected: " + _users.join(", "));
 
 		break;
 
@@ -142,7 +144,7 @@ function processMessage(evt){
 
 function putMessage(uname, msg){
 	var date = new Date();
-	var timestamp = date.getHours() + ":" + date.getMinutes();
+	var timestamp = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
 	box.innerHTML += "<span class=\"timestamp\">{0}</span><span class=\"username\">{1}</span> {2}<br/>\n".format(timestamp,uname,msg);
 }
 
